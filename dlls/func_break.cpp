@@ -22,6 +22,9 @@
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
+#include "player.h"
+#include "weapons.h"
+#include <string>
 #include "monsters.h"
 #include "saverestore.h"
 #include "func_break.h"
@@ -525,7 +528,16 @@ void CBreakable::TraceAttack(entvars_t* pevAttacker, float flDamage, Vector vecD
 		break;
 
 		case matUnbreakableGlass:
-			UTIL_Ricochet(ptr->vecEndPos, RANDOM_FLOAT(0.5, 1.5));
+			// do not spark on crowbar :)
+			CBasePlayer* pPlayer = (CBasePlayer*)GET_PRIVATE(ENT(pevAttacker));
+			CBasePlayerItem* pItem = pPlayer->m_pActiveItem;
+			if (pItem->m_iId != WEAPON_CROWBAR)
+			{
+				UTIL_Ricochet(ptr->vecEndPos, RANDOM_FLOAT(0.5, 1.5));
+			}
+
+			std::string message = "active item id is: " + std::to_string(pItem->m_iId) + "\n";
+			//ALERT(at_console, message.c_str());
 			break;
 		}
 	}
